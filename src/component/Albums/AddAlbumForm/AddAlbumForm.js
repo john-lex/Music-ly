@@ -23,7 +23,7 @@ export default function AddAlbumForm(props) {
     const [artist, setArtists] = useState([])
     const [imageUrl, setImageUrl] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-
+    
     useEffect(() => {
       db.collection('artist')
         .get()
@@ -80,6 +80,7 @@ export default function AddAlbumForm(props) {
     const onDrop = useCallback( acceptedFile => {
         const file = acceptedFile[0];
         setFileAlbum(file);
+        setImageUrl(URL.createObjectURL(file));
     });
 
     const { getRootProps, getInputProps} = useDropzone({
@@ -101,7 +102,7 @@ export default function AddAlbumForm(props) {
                     <div 
                         {...getRootProps()}
                         className='avatar'
-                        style={{backgroundImage:`url('$(imageUrl)')`}}
+                        style={{backgroundImage: `url('${imageUrl}')` }}
                     />
                     <input {...getInputProps()}  />
                     {!imageUrl && <Image src={noImage} />}

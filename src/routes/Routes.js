@@ -12,12 +12,12 @@ import Album from '../pages/Album';
 
 export default function Routes(props) {
 
-    const { user,setReloadUser } = props;
+    const { user,setReloadUser, playerSong } = props;
 
     return (
         <Switch>
             <Route path='/' exact>
-                <Home />
+                <Home playerSong={playerSong} />
             </Route>
             <Route path='/artists' exact>
                 <Artists />
@@ -26,10 +26,10 @@ export default function Routes(props) {
                 <Albums />
             </Route>
             <Route path='/album/:id' exact>
-                <Album />
+                <Album playerSong={playerSong} />
             </Route>
             <Route path='/artist/:id' exact>
-                <Artist />
+                <Artist playerSong={playerSong} />
             </Route>
             <Route path='/settings' exact>
                 <Settings user={user} setReloadUser={setReloadUser} />

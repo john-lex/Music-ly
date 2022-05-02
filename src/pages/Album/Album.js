@@ -1,23 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { Loader } from 'semantic-ui-react';
+import ListSong from '../../component/Song/ListSong';
 import firebase from '../../utils/firebase';
 import 'firebase/compat/firestore';
 import 'firebase/compat/storage';
 
 import './Album.scss';
+import { map } from 'lodash';
 
 const db = firebase.firestore(firebase);
 
 function Album(props) {
 
-    const { match } = props;
+    const { match, playerSong } = props;
 
     const [ albums , setAlbums ] = useState(null);
 
     const [ urlImg , setUrlImg ] = useState(null);
 
-    const [artist, setArtist] = useState(null)
+    const [artist, setArtist] = useState(null);
+
+    const [ songs, setSongs ] = useState(null);
 
     useEffect(()=>{
         db.collection('albums')
@@ -50,6 +54,23 @@ function Album(props) {
         }
     },[albums])
 
+    useEffect(()=>{
+        if(albums){
+            db.collection('songs')
+              .where('album','==', match.params.id)
+              .get()
+              .then( response =>{
+                const arraySong = [];
+                map(response?.docs, song => {
+                    const data = song.data();
+                    data.id = song.id;
+                    arraySong.push(data)
+                })
+                setSongs(arraySong);
+              })
+        }
+    },[albums])
+
     if(!albums || !artist){
         return(<Loader active>
             cargando...
@@ -63,7 +84,7 @@ function Album(props) {
         </div>
         <div className='album__song'>
             <p>
-                lista de canciones..
+                <ListSong songs={songs} albumImage={urlImg} playerSong={playerSong} />
             </p>
         </div>
     </div>

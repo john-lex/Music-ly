@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import { v4 } from 'uuid'
 import firebase from '../../../utils/firebase';
 import 'firebase/compat/firestore';
+import 'firebase/compat/storage';
 import { useDropzone } from 'react-dropzone';
 
 import './AddSongForm.scss';
@@ -18,7 +19,8 @@ export default function AddSongForm(props) {
     const { setShowModal } = props;
     const [albums, setAlbums] = useState([])
     const [file, setFile] = useState(null)
-    const [formData, setFormData] = useState(defaultForm)
+    const [formData, setFormData] = useState(defaultForm);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(()=>{
       db.collection('albums')
@@ -48,14 +50,41 @@ export default function AddSongForm(props) {
       onDrop
   });
 
+
+  const uploadSong = (fileName)=>{
+    const ref = firebase.storage().ref().child(`song/${fileName}`)
+    return ref.put(file);
+  }
+
     const onSubmit = ()=> {
       if(!formData?.name || !formData?.album){
         toast.warning('el nombre nombre de la cancion y el album')
       } else if(!file){
         toast.warning('la cancion debe subirla');
       } else {
-
-      }
+        setIsLoading(true);
+        const fileName = v4();
+        uploadSong(fileName).then(()=>{
+          db.collection('songs').add({
+            name: formData.name,
+            album: formData.album,
+            song: fileName
+          }).then(()=>{
+            toast.success('cancion creada correctamente');
+            setFormData(defaultForm())
+            setIsLoading(false);
+            setShowModal(false);
+          }).catch(()=>{
+            toast.warning('error al crear la cancion')
+            setIsLoading(false);
+          })
+        }).catch(()=>{
+          toast.warning('error al subir la cancion');
+          setFormData(defaultForm())
+          setIsLoading(false);
+          setShowModal(false);
+        })
+      }   
     }
 
 
@@ -91,7 +120,7 @@ export default function AddSongForm(props) {
           </div>
         </div>
       </Form.Field>
-      <Button type='submit'>
+      <Button type='submit' loading={isLoading} >
         subir cancion
       </Button>
     </Form>
