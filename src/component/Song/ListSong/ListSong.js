@@ -22,22 +22,34 @@ export default function ListSong(props) {
                 <Table.HeaderCell>Titulo</Table.HeaderCell>
             </Table.Row>
         </Table.Header>
-
         <Table.Body>
-                {map(songs, song => (
-                    <div key={song.id}>
-                        <Table.Row>
-                        <Table.Cell collapsing >
-                            <Icon name='play circle outline' />
-                        </Table.Cell>
-                        <Table.Cell onClick={onPlay}>
-                            {song.name}
-                        </Table.Cell>
-                        </Table.Row>
-                    </div>
-                ))}
-            
+               <Song songs={songs} albumImage={albumImage} playerSong={playerSong} />         
         </Table.Body>
     </Table>
   )
+}
+
+function Song(props) {
+
+    const { songs, albumImage, playerSong} = props;
+    const [ song, setSong ] = useState(null);
+
+    map(songs, song => {
+        const arraySong = [];
+        const data = song.data();
+        data.id = song.id;
+        arraySong.push(data)
+    }  
+    )
+
+    return(
+        <Table.Row>
+            <Table.Cell>
+                <Icon name='play circle outline' />
+            </Table.Cell>
+            <Table.Cell>
+                {}
+            </Table.Cell>
+        </Table.Row>
+    )
 }
