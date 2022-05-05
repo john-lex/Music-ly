@@ -23,7 +23,9 @@ export default function ListSong(props) {
             </Table.Row>
         </Table.Header>
         <Table.Body>
-               <Song songs={songs} albumImage={albumImage} playerSong={playerSong} />         
+            {map(songs, song => (
+                 <Song key={song.id} song={song} albumImage={albumImage} playerSong={playerSong} /> 
+            ))}        
         </Table.Body>
     </Table>
   )
@@ -31,24 +33,19 @@ export default function ListSong(props) {
 
 function Song(props) {
 
-    const { songs, albumImage, playerSong} = props;
-    const [ song, setSong ] = useState(null);
+    const { song, albumImage, playerSong} = props;
 
-    map(songs, song => {
-        const arraySong = [];
-        const data = song.data();
-        data.id = song.id;
-        arraySong.push(data)
-    }  
-    )
+    const onPlay = ()=>{
+        playerSong(albumImage,song.name,song.song)
+    }
 
     return(
-        <Table.Row>
-            <Table.Cell>
+        <Table.Row onClick={onPlay}>
+            <Table.Cell collapsing>
                 <Icon name='play circle outline' />
             </Table.Cell>
             <Table.Cell>
-                {}
+                {song.name}
             </Table.Cell>
         </Table.Row>
     )
