@@ -4,11 +4,18 @@ const BrowserWindow = electron.BrowserWindow;
 
 const path = require('path');
 const isDev = require('electron-is-dev');
+const { title } = require('process');
 
 let mainWindow;
 
 function createWindow() {
-  mainWindow = new BrowserWindow({width: 900, height: 680});
+  mainWindow = new BrowserWindow({
+                    width: 1600, 
+                    height: 1000,
+                    title:'musycFy',
+                    titleBarStyle: 'hiddenInset'
+                  });
+
   mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../public/index.html')}`);
   if (isDev) {
     // Open the DevTools.
